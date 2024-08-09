@@ -1,5 +1,41 @@
 pipeline {
-    agent any
+    agent {
+        kubernetes {
+            label 'kubernetes-agent'
+            defaultContainer 'jnlp'
+            yaml """
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    jenkins: slave
+spec:
+  containers:
+  - name: docker
+    image: docker:latest
+    command:
+    - cat
+    tty: true
+    volumeMounts:
+    - name: docker-certs
+      mountPath: /certs/client
+    - name: docker-config
+      mountPath: /root/.docker
+  - name: kubectl
+    image: bitnami/kubectl:latest
+    command:
+    - cat
+    tty: true
+  volumes:
+  - name: docker-certs
+    secret:
+      secretName: docker-certs
+  - name: docker-config
+    configMap:
+      name: docker-config
+"""
+        }
+    }
     environment {
         PROJECT_ID = 'inftfy'
         CLUSTER_NAME = 'jenkins'

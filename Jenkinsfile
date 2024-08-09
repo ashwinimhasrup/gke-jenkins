@@ -17,8 +17,6 @@ spec:
     - cat
     tty: true
     volumeMounts:
-    - name: docker-certs
-      mountPath: /certs/client
     - name: docker-config
       mountPath: /root/.docker
   - name: kubectl
@@ -27,9 +25,6 @@ spec:
     - cat
     tty: true
   volumes:
-  - name: docker-certs
-    secret:
-      secretName: docker-certs
   - name: docker-config
     configMap:
       name: docker-config
